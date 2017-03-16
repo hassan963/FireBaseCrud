@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "214077171461",
+    "firebase_url": "https://fircrud.firebaseio.com",
+    "project_id": "fircrud",
+    "storage_bucket": "fircrud.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214077171461:android:f88bfd0ad9ba95b4",
+        "android_client_info": {
+          "package_name": "com.hassanmashraful.firebasecrud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "214077171461-ghtpn0g9ig47tnl20kp5q7ji2gqtka1k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC10qtNOqHk4ZN5PHOQ8Vm4Mqq87Y6xwCM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

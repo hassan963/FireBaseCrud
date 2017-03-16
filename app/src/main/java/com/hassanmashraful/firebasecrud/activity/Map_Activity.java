@@ -1,5 +1,7 @@
 package com.hassanmashraful.firebasecrud.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hassanmashraful.firebasecrud.Location;
 import com.hassanmashraful.firebasecrud.R;
+import com.hassanmashraful.firebasecrud.model.LocationDetails;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,6 +40,8 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     private DatabaseReference mList;
     private ArrayList<Location> futureLocation = new ArrayList<>();
     private FirebaseDatabase mFirebaseInstance;
+    ArrayList<LocationDetails> locationDetailses = new ArrayList<>();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,22 +98,74 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
        mList.addListenerForSingleValueEvent(new ValueEventListener() {
            double location_left, location_right;
+
+
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int count = 0;
+
                for (DataSnapshot child : dataSnapshot.getChildren()) {
                    String rightLocation = child.child("lat").getValue().toString();
                    String leftLocation = child.child("lon").getValue().toString();
+                   String city = child.child("city").getValue().toString();
+                   String deg = child.child("deg").getValue().toString();
+                   String speed = child.child("speed").getValue().toString();
 
                     location_left = Double.parseDouble(leftLocation);
                     location_right = Double.parseDouble(rightLocation);
+
                    //String party_title = child.child("party/party_title").getValue().toString();
                    //LatLng cod = new LatLng(location_left, location_right);
-                   mMap.addMarker(new MarkerOptions().position(new LatLng(location_right, location_left)).title("Yoo bitches").snippet("We r here").icon(BitmapDescriptorFactory.fromResource(R.drawable.wlll)));
+                   Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(location_right, location_left)).title(city).snippet("Wind Speed: "+speed).icon(BitmapDescriptorFactory.fromResource(R.drawable.wlll)));
+                   //marker.
+                   locationDetailses.add(new LocationDetails(marker.getId(), location_right, location_left, city, Double.parseDouble(deg), Double.parseDouble(speed)));
+
                    //mMap.addMarker(new MarkerOptions().position(cod).title(party_title));
                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location_right, location_left)));
                }
                LatLng position = new LatLng(88.0433, 92.66942);
                mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+
+               mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                   @Override
+                   public boolean onMarkerClick(Marker marker) {
+
+                       AlertDialog.Builder builder = new AlertDialog.Builder(Map_Activity.this);
+
+                       for (int i = 0; i<locationDetailses.size(); i++) {
+
+                           if (marker.getId().equals(locationDetailses.get(i).getMarkerID())){
+                               builder.setTitle("City: "+locationDetailses.get(i).getCity());
+                               builder.setMessage("Wind Speed: "+locationDetailses.get(i).getSpeed()+"\n"+"Degree: "+locationDetailses.get(i).getDeg()+"\n"+"We can plant WindMill here");
+                           }
+
+
+                       }
+
+                           builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                               public void onClick(DialogInterface dialog, int id) {
+                                   // User clicked OK button
+                               }
+                           });
+                           builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                               public void onClick(DialogInterface dialog, int id) {
+                                   // User cancelled the dialog
+                               }
+                           });
+
+                           // Set other dialog properties
+
+                           // Create the AlertDialog
+                           AlertDialog dialog = builder.create();
+                           dialog.show();
+
+
+                        // Add the button
+
+                       return false;
+                   }
+               });
 
                /*MapController controller = mMap.getController();
                controller.zoomToSpan(

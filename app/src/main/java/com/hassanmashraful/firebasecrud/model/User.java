@@ -9,10 +9,11 @@ import java.util.ArrayList;
 public class User {
 
     public String name;
-    public String phnNum;
+    public int phnNum;
     public String address;
     public String landDetails;
-    private double latitude, logitude;
+    public double latitude, logitude;
+
 
     private static ArrayList<Wind_Requirement> wind_requirements = new ArrayList<>();
 
@@ -24,7 +25,7 @@ public class User {
     public User() {
     }
 
-    public User(String name, String phnNum, String address, String landDetails, double latitude, double logitude) {
+    public User(String name, int phnNum, String address, String landDetails, double latitude, double logitude) {
         this.name = name;
         this.phnNum = phnNum;
         this.address = address;

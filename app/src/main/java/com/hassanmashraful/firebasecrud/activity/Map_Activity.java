@@ -2,6 +2,7 @@ package com.hassanmashraful.firebasecrud.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -124,10 +125,10 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
                    //mMap.addMarker(new MarkerOptions().position(cod).title(party_title));
                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location_right, location_left)));
                }
-               //LatLng position = new LatLng(88.0433, 92.66942);
-               //mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+               LatLng position = new LatLng(88.0433, 92.66942);
+               mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
 
-               mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(88.0433, 92.66942),5.0f));
+               //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(88.0433, 92.66942),5.0f));
 
                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                    @Override
@@ -256,6 +257,7 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
+            startActivity(new Intent(getApplicationContext(), NavDrawer_Activity.class));
             // finish the activity
             onBackPressed();
             return true;

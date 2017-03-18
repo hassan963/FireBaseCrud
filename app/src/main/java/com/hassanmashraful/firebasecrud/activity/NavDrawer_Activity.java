@@ -330,10 +330,12 @@ public class NavDrawer_Activity extends AppCompatActivity {
                         intent.putExtra("email", email);
                         startActivity(intent);
                         drawer.closeDrawers();
+                        finish();
                         return true;
                     case R.id.nav_map:
                         startActivity(new Intent(NavDrawer_Activity.this, Map_Activity.class));
                         drawer.closeDrawers();
+                        finish();
                         return true;
 
                     default:

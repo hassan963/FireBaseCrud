@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.hassanmashraful.firebasecrud.R.id.btn_save;
-import static com.hassanmashraful.firebasecrud.R.id.landSizeET;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView locSelectTV, apiTV;
     private EditText nameET, landSizeET, remarkET, phnET;
     private Button btnSave;
-    private CheckBox checkBox;
+    private CheckBox open_space;
     private Spinner areaTYP, prevTYP;
     private LinearLayout verdictField;
 
@@ -146,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //locTV = (TextView) findViewById(R.id.locTV);
         btnSave = (Button) findViewById(btn_save);
         locSelectTV = (TextView) findViewById(R.id.locSelectTV);
+        open_space = (CheckBox) findViewById(R.id.open_space);
 
         mUsername = ANONYMOUS;
         //firebaseDatabase = FirebaseDatabase.getInstance();
@@ -218,6 +218,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //String address = addressET.getText().toString();
                 String remarks = remarkET.getText().toString();
                 double landSize = Double.parseDouble(landSizeET.getText().toString());
+                String spaceType = "";
+                if (open_space.isChecked()){
+                    spaceType = "Open space";
+                }else {
+                    spaceType = "space not open";
+                }
                 //mList.setValue(names);
                 // Check for already existed userId
 
@@ -231,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }else {
                     updateUser(address, landDetails);
                 }*/
-                updateUser(name, phnNum, address, placename, remarks, latitude, longitude, landSize, Double.parseDouble(speed), Double.parseDouble(deg));
+                updateUser(name, phnNum, address, placename, spaceType, remarks, latitude, longitude, landSize, Double.parseDouble(speed), Double.parseDouble(deg));
 
                 //createUser(name, email, phnNum, address, landDetails);
 
@@ -242,8 +248,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 nameET.setText("");
                 phnET.setText("");
-                //locTV.setText("");
+                landSizeET.setText("");
                 remarkET.setText("");
+                open_space.setChecked(false);
 
             }
         });
@@ -374,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }*/
 
-    private void updateUser(final String name, final String phnNum, final String address, final String placename, final String remarks, final double latitude, final double longitude, final double landSize, final double speed, final double deg) {
+    private void updateUser(final String name, final String phnNum, final String address, final String placename, final String spaceType, final String remarks, final double latitude, final double longitude, final double landSize, final double speed, final double deg) {
         // updating the user via child nodes
 
         /*if (!TextUtils.isEmpty(address))
@@ -393,7 +400,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     mFirebaseDatabase.child(email).child("address").setValue(address); mFirebaseDatabase.child(email).child("remarks").setValue(remarks);
                     mFirebaseDatabase.child(email).child("placename").setValue(placename); mFirebaseDatabase.child(email).child("longitude").setValue(longitude);
                     mFirebaseDatabase.child(email).child("deg").setValue(deg); mFirebaseDatabase.child(email).child("windspeed").setValue(speed);
-                    mFirebaseDatabase.child(email).child("landSize").setValue(landSize);mFirebaseDatabase.child(email).child("latitude").setValue(latitude);}
+                    mFirebaseDatabase.child(email).child("landSize").setValue(landSize);mFirebaseDatabase.child(email).child("latitude").setValue(latitude);
+                mFirebaseDatabase.child(email).child("spaceType").setValue(spaceType);}
                 catch (Exception e) { e.printStackTrace(); }
 
             }
@@ -484,8 +492,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             //noinspection SimplifiableIfStatement
             if (id == android.R.id.home) {
+
+                startActivity(new Intent(getApplicationContext(), NavDrawer_Activity.class));
                 // finish the activity
                 onBackPressed();
+
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -666,16 +677,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.areaTYP:
                 // On selecting a spinner item
                 areaValue = adapterView.getItemAtPosition(position).toString();
+                break;
 
             case R.id.prevTYP:
                 // On selecting a spinner item
                 prevValue = adapterView.getItemAtPosition(position).toString();
-
-                // Showing selected spinner item
-                Toast.makeText(adapterView.getContext(), "Selected: " + areaValue+prevValue, Toast.LENGTH_SHORT).show();
-
+                break;
+            default:
+                areaValue = adapterView.getItemAtPosition(position).toString();
+                prevValue = adapterView.getItemAtPosition(position).toString();
 
         }
+        // Showing selected spinner item
+        Toast.makeText(adapterView.getContext(), "Selected: " + areaValue+prevValue, Toast.LENGTH_SHORT).show();
+
 
 
 

@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TextView nameTV, phnTV, landSizeTV, landTypTV, prevTV, addTV, latLonTV;
 
     private String name;
-    private int phnNum;
+    private String phnNum;
     private String address;
     private String landDetails;
     private double latitude, longitude;
@@ -174,7 +174,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 name = dataSnapshot.child("name").getValue().toString();
-                phnNum = Integer.parseInt(dataSnapshot.child("phnNum").getValue().toString());
+                phnNum = dataSnapshot.child("phnNum").getValue().toString();
                 landDetails = dataSnapshot.child("landDetails").getValue().toString();
                 address = dataSnapshot.child("address").getValue().toString();
                 latitude = Double.parseDouble(dataSnapshot.child("latitude").getValue().toString());

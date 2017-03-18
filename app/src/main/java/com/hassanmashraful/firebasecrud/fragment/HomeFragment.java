@@ -66,7 +66,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private String name;
     private String phnNum;
     private String address;
-    private String landDetails;
     private double latitude, longitude;
 
     private static String email;
@@ -175,14 +174,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                 name = dataSnapshot.child("name").getValue().toString();
                 phnNum = dataSnapshot.child("phnNum").getValue().toString();
-                landDetails = dataSnapshot.child("landDetails").getValue().toString();
                 address = dataSnapshot.child("address").getValue().toString();
                 latitude = Double.parseDouble(dataSnapshot.child("latitude").getValue().toString());
                 longitude = Double.parseDouble(dataSnapshot.child("longitude").getValue().toString());
 
                 nameTV.setText("Name: "+name);
                 phnTV.setText("Phone Num: "+phnNum);
-                landSizeTV.setText("Land Details: "+landDetails);
                 landTypTV.setText("Address: "+address);
                 prevTV.setText("Still working");
                 addTV.setText("Address: "+address);

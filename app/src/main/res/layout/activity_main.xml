@@ -4,26 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.hassanmashraful.firebasecrud.activity.MainActivity">
 
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/locSelectTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginTop="4dp"
+        android:background="@color/com_facebook_button_background_color_disabled"
+        android:gravity="center"
+        android:text="select your location"
+        android:textColor="#000"
+        android:textSize="34sp"
+        android:textStyle="bold|italic" />
 
-        <Button
-            android:id="@+id/locSelectBTN"
-            android:text="Location"
-            android:background="@color/com_facebook_button_background_color_disabled"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/verdictField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/name"
+                android:id="@+id/nameET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/name"
@@ -32,26 +41,59 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
 
 
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/desET"
-                android:layout_width="match_parent"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Description"
-                android:inputType="text"
-                android:maxLines="1" />
+                android:layout_weight="1">
 
-        </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/landSizeET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="land size in sq km" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <CheckBox
+                android:id="@+id/open_space"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Open Space" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/areaTYP"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </Spinner>
+
+            <Spinner
+                android:id="@+id/prevTYP"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </Spinner>
+
+        </LinearLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -61,8 +103,22 @@
                 android:id="@+id/phnET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone Num"
+                android:hint="phone num"
                 android:inputType="number"
+                android:maxLines="1" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/remarkET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="remarks.."
+                android:inputType="text"
                 android:maxLines="1" />
 
         </android.support.design.widget.TextInputLayout>
@@ -85,11 +141,13 @@
 
         <TextView
             android:id="@+id/locTV"
-            android:textSize="20sp"
-            android:textColor="#b41010"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#b41010"
+            android:textSize="20sp" />
+
 
     </LinearLayout>
+
 
 </LinearLayout>

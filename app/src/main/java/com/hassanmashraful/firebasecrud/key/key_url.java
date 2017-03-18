@@ -14,7 +14,7 @@ public interface key_url {
     public static final String KEY_LAT = "lat=";
     public static final String KEY_LONG = "&lon=";
 
-    public static final String APP_ID = "&appid=1efc0fc4375a4a874205759effcc7e36";
+    public static final String APP_ID = "&appid=1efc0fc4375a4a874205759effcc7e36&cnt=1";
 
     //lat=21.465895&lon=91.955731&appid=1efc0fc4375a4a874205759effcc7e36
 

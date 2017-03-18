@@ -124,8 +124,10 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
                    //mMap.addMarker(new MarkerOptions().position(cod).title(party_title));
                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location_right, location_left)));
                }
-               LatLng position = new LatLng(88.0433, 92.66942);
-               mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+               //LatLng position = new LatLng(88.0433, 92.66942);
+               //mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+
+               mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(88.0433, 92.66942),5.0f));
 
                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                    @Override

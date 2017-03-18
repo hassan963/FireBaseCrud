@@ -1,6 +1,8 @@
 package com.hassanmashraful.firebasecrud.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -9,9 +11,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,23 +49,28 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.hassanmashraful.firebasecrud.R.id.btn_save;
+import static com.hassanmashraful.firebasecrud.R.id.landSizeET;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private TextView apiTV, locTV;
-    private EditText inputName, inputEmail, desET, phnET, addressET;
-    private Button btnSave, locSelectBTN;
+    private TextView locSelectTV, apiTV;
+    private EditText nameET, landSizeET, remarkET, phnET;
+    private Button btnSave;
+    private CheckBox checkBox;
+    private Spinner areaTYP, prevTYP;
+    private LinearLayout verdictField;
 
     private DatabaseReference mFirebaseDatabase;
 
     private FirebaseDatabase mFirebaseInstance;
     private String userId;
     //private DatabaseReference mList;
-    private String loc;
+    private String prevValue, areaValue;
 
     //private ArrayList<Location> futureLocation = new ArrayList<>();
     private boolean checkFLAG = false;
@@ -67,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static double latitude, longitude;
-    private static String address;
+    private static String address, placename, speed, deg;
     public static final String ANONYMOUS = "anonymous";
 
     private RequestQueue requestQueue;
@@ -124,13 +136,16 @@ public class MainActivity extends AppCompatActivity {
         //to init VolleySingleton class
         sInstance = this;
 
+
+        verdictField = (LinearLayout) findViewById(R.id.verdictField);
         apiTV = (TextView) findViewById(R.id.apiTV);
-        inputName = (EditText) findViewById(R.id.name);
-        desET = (EditText) findViewById(R.id.desET);
+        nameET = (EditText) findViewById(R.id.nameET);
+        remarkET = (EditText) findViewById(R.id.remarkET);
         phnET = (EditText) findViewById(R.id.phnET);
-        locTV = (TextView) findViewById(R.id.locTV);
+        landSizeET = (EditText) findViewById(R.id.landSizeET);
+        //locTV = (TextView) findViewById(R.id.locTV);
         btnSave = (Button) findViewById(btn_save);
-        locSelectBTN = (Button) findViewById(R.id.locSelectBTN);
+        locSelectTV = (TextView) findViewById(R.id.locSelectTV);
 
         mUsername = ANONYMOUS;
         //firebaseDatabase = FirebaseDatabase.getInstance();
@@ -197,11 +212,12 @@ public class MainActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = inputName.getText().toString();
+                String name = nameET.getText().toString();
                 //String email = inputEmail.getText().toString();
                 String phnNum = phnET.getText().toString();
                 //String address = addressET.getText().toString();
-                String landDetails = desET.getText().toString();
+                String remarks = remarkET.getText().toString();
+                double landSize = Double.parseDouble(landSizeET.getText().toString());
                 //mList.setValue(names);
                 // Check for already existed userId
 
@@ -215,28 +231,26 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     updateUser(address, landDetails);
                 }*/
-                updateUser(name, phnNum, address, landDetails, latitude, longitude);
+                updateUser(name, phnNum, address, placename, remarks, latitude, longitude, landSize, Double.parseDouble(speed), Double.parseDouble(deg));
 
                 //createUser(name, email, phnNum, address, landDetails);
 
               //  gettingData();
 
-                callingHOST();
-
                // for (int i = 0; i< futureLocation.size(); i++)
               //  Log.v("##$##$#$%%##@$%#%$# ", futureLocation.get(i).getCity()+" "+futureLocation.get(i).getDeg()+" "+futureLocation.get(i).getLat()+" "+futureLocation.get(i).getLon()+" "+futureLocation.get(i).getSpeed());
 
-                inputName.setText("");
+                nameET.setText("");
                 phnET.setText("");
-                locTV.setText("");
-                desET.setText("");
+                //locTV.setText("");
+                remarkET.setText("");
 
             }
         });
 
 
 
-        locSelectBTN.setOnClickListener(new View.OnClickListener() {
+        locSelectTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -247,17 +261,49 @@ public class MainActivity extends AppCompatActivity {
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
+                verdictField.setVisibility(View.GONE);
+
             }
         });
 
+        // Spinner element
+        Spinner areaTYP = (Spinner) findViewById(R.id.areaTYP);
+        Spinner prevTYP = (Spinner) findViewById(R.id.prevTYP);
 
-        /*mapBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getAppContext(), Map_Activity.class);
-                startActivity(intent);
-            }
-        });*/
+
+        // Spinner click listener
+        areaTYP.setOnItemSelectedListener(this);
+        prevTYP.setOnItemSelectedListener(this);
+
+
+        // Spinner Drop down elements
+        List<String> area = new ArrayList<String>();
+        area.add("None");
+        area.add("Open field");
+        area.add("Coastal area");
+        area.add("Residential area");
+        area.add("Riverside");
+
+        List<String> prev = new ArrayList<>();
+        prev.add("None");
+        prev.add("Flat Ground");
+        prev.add("Improved Ground From Pond");
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> areaAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, area);
+
+        // Drop down layout style - list view with radio button
+        areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        areaTYP.setAdapter(areaAdapter);
+
+
+        ArrayAdapter<String> prevAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, prev);
+        prevAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prevTYP.setAdapter(prevAdapter);
+
+
 
 
     }
@@ -328,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }*/
 
-    private void updateUser(final String name, final String phnNum, final String address, final String landDetails, final double latitude, final double longitude) {
+    private void updateUser(final String name, final String phnNum, final String address, final String placename, final String remarks, final double latitude, final double longitude, final double landSize, final double speed, final double deg) {
         // updating the user via child nodes
 
         /*if (!TextUtils.isEmpty(address))
@@ -344,8 +390,10 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 try { mFirebaseDatabase.child(email).child("name").setValue(name); mFirebaseDatabase.child(email).child("phnNum").setValue(phnNum);
-                    mFirebaseDatabase.child(email).child("address").setValue(address); mFirebaseDatabase.child(email).child("landDetails").setValue(landDetails);
-                    mFirebaseDatabase.child(email).child("latitude").setValue(latitude); mFirebaseDatabase.child(email).child("longitude").setValue(longitude);}
+                    mFirebaseDatabase.child(email).child("address").setValue(address); mFirebaseDatabase.child(email).child("remarks").setValue(remarks);
+                    mFirebaseDatabase.child(email).child("placename").setValue(placename); mFirebaseDatabase.child(email).child("longitude").setValue(longitude);
+                    mFirebaseDatabase.child(email).child("deg").setValue(deg); mFirebaseDatabase.child(email).child("windspeed").setValue(speed);
+                    mFirebaseDatabase.child(email).child("landSize").setValue(landSize);mFirebaseDatabase.child(email).child("latitude").setValue(latitude);}
                 catch (Exception e) { e.printStackTrace(); }
 
             }
@@ -377,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
                 StringBuilder stBuilder = new StringBuilder();
-                String placename = String.format("%s", place.getName());
+                 placename = String.format("%s", place.getName());
                 latitude = place.getLatLng().latitude;
                 longitude = place.getLatLng().longitude;
                 address = String.format("%s", place.getAddress());
@@ -393,10 +441,13 @@ public class MainActivity extends AppCompatActivity {
                 stBuilder.append("Logitude: ");
                 stBuilder.append(longitude);
                 stBuilder.append("\n");
-                locTV.setText("  ::  "+stBuilder.toString()+"  ::  ");
+                apiTV.setText("  ::  "+stBuilder.toString()+"  ::  ");
                 Log.v("@#@$@%%", stBuilder.toString());
+
+                callingHOST();
             }
         }
+
 
 
     }
@@ -551,8 +602,10 @@ public class MainActivity extends AppCompatActivity {
                     String id = currentData.getString(key_url.KEY_NAME);
 
                     JSONObject wind = currentData.getJSONObject(key_url.KEY_WIND);
-                    String speed = wind.getString(key_url.KEY_SPEED);
-                    String deg = wind.getString(key_url.KEY_DEG);
+                     speed = wind.getString(key_url.KEY_SPEED);
+                     deg = wind.getString(key_url.KEY_DEG);
+
+                    Log.v("speed%^%%&^%&%:  ", speed+"  "+deg);
 
                     wind_requirements.add(new Wind_Requirement(Double.parseDouble(speed), Double.parseDouble(deg)));
 
@@ -566,10 +619,30 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Error connection..", Toast.LENGTH_SHORT).show();
         }
         //queueShow.setText(String.valueOf(queueCount));
 
-        Log.v("$@Q$$QQ","CALLING AJADDHAFHASHD");
+        if (Double.parseDouble(speed)>=3){
+            verdictField.setVisibility(View.VISIBLE);
+        }else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+            builder.setTitle("Sorry..");
+            builder.setMessage("Address: "+address+", here WindMill can't be plant as wind speed is "+speed+"ms\n"+"Need to be above 3 ms");
+
+            builder.setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                }
+            });
+
+            // Set other dialog properties
+
+            // Create the AlertDialog
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     public static String getJSOnURL(){
@@ -585,6 +658,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+
+        switch(adapterView.getId()) {
+
+            case R.id.areaTYP:
+                // On selecting a spinner item
+                areaValue = adapterView.getItemAtPosition(position).toString();
+
+            case R.id.prevTYP:
+                // On selecting a spinner item
+                prevValue = adapterView.getItemAtPosition(position).toString();
+
+                // Showing selected spinner item
+                Toast.makeText(adapterView.getContext(), "Selected: " + areaValue+prevValue, Toast.LENGTH_SHORT).show();
 
 
+        }
+
+
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+        areaValue = adapterView.getItemAtPosition(0).toString();
+        prevValue = adapterView.getItemAtPosition(0).toString();
+
+    }
 }

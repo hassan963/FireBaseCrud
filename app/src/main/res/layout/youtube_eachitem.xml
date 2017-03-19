@@ -11,7 +11,7 @@
         android:layout_height="300dp"
         android:layout_margin="5dp"
         android:scaleType="centerCrop"
-        android:background="#ba3434"
+        android:background="#cb7777"
         android:layout_alignParentLeft="true"/>
 
         <RelativeLayout android:id="@+id/relativeLayout_over_youtube_thumbnail"
@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:scaleType="center"
-                android:src="@drawable/ic_menu_send"
+                android:src="@drawable/play"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />

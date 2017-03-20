@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/nameTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+
+    <TextView
+        android:id="@+id/phnTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+    <TextView
+        android:id="@+id/landSizeTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+
+    <TextView
+        android:id="@+id/numOfTurbine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+    <TextView
+        android:id="@+id/oneTurbineOutput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+    <TextView
+        android:id="@+id/totalTurbineOutput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+    <TextView
+        android:id="@+id/latLonTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/authui_colorPrimaryDark"/>
+
+</LinearLayout>

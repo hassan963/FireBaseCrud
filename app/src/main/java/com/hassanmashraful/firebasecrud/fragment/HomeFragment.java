@@ -7,6 +7,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +55,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    //For viewPager
+    static final int NUM_ITEMS = 2;
+    private ViewPagerAdapter mAdapter;
+    private ViewPager mPager;
 
     private OnFragmentInteractionListener mListener;
 
@@ -128,14 +136,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         getUSERDATA();
 
-        nameTV = (TextView) view.findViewById(R.id.nameTV);
+        //Right nw
+        /*nameTV = (TextView) view.findViewById(R.id.nameTV);
         phnTV = (TextView) view.findViewById(R.id.phnTV);
         landSizeTV = (TextView) view.findViewById(R.id.landSizeTV);
         landTypTV = (TextView) view.findViewById(R.id.landTypTV);
 
         prevTV = (TextView) view.findViewById(R.id.prevTV);
         addTV = (TextView) view.findViewById(R.id.addTV);
-        latLonTV = (TextView) view.findViewById(R.id.latLonTV);
+        latLonTV = (TextView) view.findViewById(R.id.latLonTV);*/
 
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
@@ -148,6 +157,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);*/
 
 
+        mAdapter = new ViewPagerAdapter(getChildFragmentManager());
+
+        mPager = (ViewPager) view.findViewById(R.id.pager);
+        mPager.setAdapter(mAdapter);
 
        mList.addListenerForSingleValueEvent(new ValueEventListener() {
            @Override
@@ -219,13 +232,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 //nameTV.setText("Name: "+name);
                 //phnTV.setText("Phone Num: "+phnNum);
                 //landTypTV.setText("Address: "+address);
-                prevTV.setText("Still working");
+
+                //Right nw
+                /*prevTV.setText("Still working");
                 addTV.setText("Address: "+address);
                 latLonTV.setText("Latitude: "+latitude+"\n"+" "+"Longitude: "+longitude);
 
                 nameTV.setText("For 25m Turbine, Num of turbine: "+numOfTurbineOne+" \nPer turbine power output: "+oneTurbineOutputOne+" \nTotal output: "+totalTurbineOutputOne);
                 phnTV.setText("For 50m Turbine, Num of turbine: "+numOfTurbineTwo+" \nPer turbine power output: "+oneTurbineOutputTwo+" \nTotal output: "+totalTurbineOutputTwo);
-                landTypTV.setText("For 100m Turbine, Num of turbine: "+numOfTurbineThree+" \nPer turbine power output: "+oneTurbineOutputThree+" \nTotal output: "+totalTurbineOutputThree);
+                landTypTV.setText("For 100m Turbine, Num of turbine: "+numOfTurbineThree+" \nPer turbine power output: "+oneTurbineOutputThree+" \nTotal output: "+totalTurbineOutputThree);*/
 
             }
 
@@ -428,6 +443,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         }
 
+    }
+
+    public static class ViewPagerAdapter extends FragmentPagerAdapter {
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int num) {
+            if (num == 0) {
+                FragmentOne fragmentOne = new FragmentOne();
+                Bundle bundle = new Bundle();
+                bundle.putInt("numOfTurbineOne", 1000);
+                bundle.putDouble("oneTurbineOutputOne", 754.77);
+                bundle.putDouble("totalTurbineOutputOne", 754000.77);
+                fragmentOne.setArguments(bundle);
+                return fragmentOne;
+            } else {
+                FragmentTwo fragmentTwo = new FragmentTwo();
+                Bundle bundle = new Bundle();
+                bundle.putInt("numOfTurbineTwo", 2000);
+                bundle.putDouble("oneTurbineOutputTwo", 3455.77);
+                bundle.putDouble("totalTurbineOutputTwo", 2353000.77);
+                fragmentTwo.setArguments(bundle);
+                return fragmentTwo;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_ITEMS;
+        }
     }
 
 

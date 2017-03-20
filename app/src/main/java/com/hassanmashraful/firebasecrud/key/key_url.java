@@ -23,4 +23,17 @@ public interface key_url {
     public static final String URL_GET_DATA = "http://api.openweathermap.org/data/2.5/find?";
     public static final String URL_SEND_RESPOSE = "http://104.171.117.35/sms/sendsms/responce";
 
+    public static final String TurbineDetails = "TurbineDetails" ;
+    public static final String numOfTurbineOne = "numOfTurbineOne";
+    public static final String oneTurbineOutputOne = "oneTurbineOutputOne";
+    public static final String totalTurbineOutputOne = "totalTurbineOutputOne";
+
+    public static final String numOfTurbineTwo = "numOfTurbineTwo";
+    public static final String oneTurbineOutputTwo = "oneTurbineOutputTwo";
+    public static final String totalTurbineOutputTwo = "totalTurbineOutputTwo";
+
+    public static final String numOfTurbineThree = "numOfTurbineThree";
+    public static final String oneTurbineOutputThree = "oneTurbineOutputThree";
+    public static final String totalTurbineOutputThree = "totalTurbineOutputThree";
+
 }

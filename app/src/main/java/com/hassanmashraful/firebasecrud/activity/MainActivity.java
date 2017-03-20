@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private VolleySingleton volleySingleton;
+    private SharedPreferences sharedpreferences;
 
 
     @Override
@@ -130,11 +135,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .getColor(R.color.colorPrimary)));
         }
 
-        email = getIntent().getStringExtra("email");
+        //email = getIntent().getStringExtra("email");
 
         //to init VolleySingleton class
         sInstance = this;
-
+        getUSERDATA();
 
         verdictField = (LinearLayout) findViewById(R.id.verdictField);
         apiTV = (TextView) findViewById(R.id.apiTV);
@@ -153,32 +158,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //firebaseAuth = FirebaseAuth.getInstance();
         mFirebaseInstance = FirebaseDatabase.getInstance();
 
-        //right nw
-       /* authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null){
-                    //user signed in
-                    onSignedInInitialize(user.getDisplayName());
-                    getUSERDATA();
-
-                }else {
-                    //user not signed in
-                    onSignedOutCleanUp();
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false).setProviders(
-                                    AuthUI.EMAIL_PROVIDER,
-                                    AuthUI.GOOGLE_PROVIDER).setTheme(R.style.AppThemeFirebaseAuth).setLogo(q).build(), RC_SIGN_IN);
-
-                }
-
-
-            }
-        };*/
 
         //for placepicker
         mClient = new GoogleApiClient
@@ -197,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // store app title to 'app_title' node
        // mFirebaseInstance.getReference("app_title").setValue("Realtime Database");
 
-
+        sharedpreferences = getSharedPreferences(key_url.TurbineDetails, Context.MODE_PRIVATE);
 
 
        // mList = mFirebaseInstance.getReference("windfirm/future");
@@ -219,32 +198,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String remarks = remarkET.getText().toString();
                 double landSize = Double.parseDouble(landSizeET.getText().toString());
                 String spaceType = "";
+
                 if (open_space.isChecked()){
                     spaceType = "Open space";
+                    verdictResult(spaceType);
                 }else {
                     spaceType = "space not open";
                 }
-                //mList.setValue(names);
-                // Check for already existed userId
 
-                /*if (TextUtils.isEmpty(userId)) {
-                    createUser(name, phnNum, address, landDetails);
-                } else {
-                    updateUser(address, landDetails);
-                }*/
-                /*if (email==null){
-                    createUser(name, phnNum, address, landDetails);
-                }else {
-                    updateUser(address, landDetails);
-                }*/
+
+                //Double.parseDouble(speed), spaceType,
+
                 updateUser(name, phnNum, address, placename, spaceType, remarks, latitude, longitude, landSize, Double.parseDouble(speed), Double.parseDouble(deg));
-
-                //createUser(name, email, phnNum, address, landDetails);
-
-              //  gettingData();
-
-               // for (int i = 0; i< futureLocation.size(); i++)
-              //  Log.v("##$##$#$%%##@$%#%$# ", futureLocation.get(i).getCity()+" "+futureLocation.get(i).getDeg()+" "+futureLocation.get(i).getLat()+" "+futureLocation.get(i).getLon()+" "+futureLocation.get(i).getSpeed());
 
                 nameET.setText("");
                 phnET.setText("");
@@ -286,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Spinner Drop down elements
         List<String> area = new ArrayList<String>();
         area.add("None");
-        area.add("Open field");
+        area.add("Agriculture field");
         area.add("Coastal area");
         area.add("Residential area");
         area.add("Riverside");
@@ -314,6 +279,91 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     }
+
+    private void verdictResult(String spaceTyp){
+
+        if (spaceTyp.equals("Open space") && prevValue.equals("Flat Ground")){
+
+            switch (areaValue){
+                case "Agriculture field":
+                    resultTurbine(25);
+                    resultTurbine(50);
+                    resultTurbine(100);
+                    break;
+                case "Coastal area":
+                    resultTurbine(50);
+                    resultTurbine(100);
+                    break;
+                case "Residential area":
+                    resultTurbine(25);
+                    break;
+                case "Riverside":
+                    resultTurbine(50);
+                    resultTurbine(100);
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+    }
+
+    private void resultTurbine(double turbineHeight){
+
+        //0.5*p*A*Cp*V3*Ng*Nb
+        double air_density = 1.2, //p 1.2 kg/m3 (sea level)
+                rotor_swept_area, // meter^2
+                coefficient_of_performance = 0.35, //Cp  0.35 is typical, 0.56 is the theoretical maximum known as the Betz limit.
+                wind_velocity = Double.parseDouble(speed), // V
+                generator_efficiency = 50, // Ng	50 percent to 80 percent.
+                gear_box_bearing_efficiency = 95, // Nb 95 percent
+                pi = 3.1416;
+        double oneTurbineOutput, land; land = Double.parseDouble(landSizeET.getText().toString());
+        double numOfTurbine = 0, totalTurbineOutput = 0;
+        land = land * 1000000;
+
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+
+        if (turbineHeight==25){
+            rotor_swept_area = pi*(turbineHeight*turbineHeight);
+            numOfTurbine = land/1000;
+            oneTurbineOutput = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutput = numOfTurbine*oneTurbineOutput;
+            Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
+            Log.v("@$@%#%%$^% TURBINE",numOfTurbine+" "+totalTurbineOutput+" "+oneTurbineOutput);
+            putDouble(editor, key_url.numOfTurbineOne, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputOne, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputOne, oneTurbineOutput);
+            editor.apply();
+
+
+        }
+        if (turbineHeight==50){
+            rotor_swept_area = pi*(turbineHeight*turbineHeight);
+            numOfTurbine = land/1500;
+            oneTurbineOutput = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutput = numOfTurbine*oneTurbineOutput;
+            Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
+            Log.v("@$@%#%%$^% TURBINE",numOfTurbine+" "+totalTurbineOutput+" "+oneTurbineOutput);
+            putDouble(editor, key_url.numOfTurbineTwo, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputTwo, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputTwo, oneTurbineOutput);
+            editor.apply();
+        }
+        if (turbineHeight==100){
+            rotor_swept_area = pi*(turbineHeight*turbineHeight);
+            numOfTurbine = land/2000;
+            oneTurbineOutput = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutput = numOfTurbine*oneTurbineOutput;
+            Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
+            Log.v("@$@%#%%$^% TURBINE",numOfTurbine+" "+totalTurbineOutput+" "+oneTurbineOutput);
+            putDouble(editor, key_url.numOfTurbineThree, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputThree, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputThree, oneTurbineOutput);
+            editor.apply();
+        }
+
+    }
+
+    SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
+        return edit.putLong(key, Double.doubleToRawLongBits(value));
+    }
+
 
     private void collectPhoneNumbers(Map<String,Object> users) {
 
@@ -702,6 +752,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         areaValue = adapterView.getItemAtPosition(0).toString();
         prevValue = adapterView.getItemAtPosition(0).toString();
+
+    }
+
+    public void getUSERDATA(){
+
+        //firebaseAuth.getCurrentUser().getEmail();
+        //String email = "#";
+        //String uid="";
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            for (UserInfo profile : user.getProviderData()) {
+                // Id of the provider (ex: google.com)
+                //String providerId = profile.getProviderId();
+
+                // UID specific to the provider
+                email = profile.getUid();
+                email = EncodeString(email);
+
+                // Name, email address, and profile photo Url
+                /*String name = profile.getDisplayName();
+                email = profile.getEmail();
+                Uri photoUrl = profile.getPhotoUrl();*/
+            };
+        }
+
+        Toast.makeText(getApplicationContext(), " "+email, Toast.LENGTH_SHORT).show();
 
     }
 }

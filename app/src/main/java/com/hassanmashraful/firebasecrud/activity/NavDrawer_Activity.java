@@ -27,9 +27,17 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hassanmashraful.firebasecrud.R;
 import com.hassanmashraful.firebasecrud.fragment.HomeFragment;
 import com.hassanmashraful.firebasecrud.fragment.MoviesFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.hassanmashraful.firebasecrud.R.drawable.q;
 import static com.hassanmashraful.firebasecrud.activity.MainActivity.EncodeString;
@@ -47,6 +55,8 @@ public class NavDrawer_Activity extends AppCompatActivity {
     private TextView txtName, txtWebsite;
     private Toolbar toolbar;
     private FloatingActionButton fab;
+
+    List<AuthUI.IdpConfig> providers; // for deprecated setProviders method in firebase auth
 
 
     // urls to load navigation header background image
@@ -68,7 +78,7 @@ public class NavDrawer_Activity extends AppCompatActivity {
     private static final String TAG_HOME = "home";
     private static final String TAG_HISTORY = "history";
 
-    public static String CURRENT_TAG = TAG_HOME;
+    public static String CURRENT_TAG = TAG_HISTORY;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -76,6 +86,9 @@ public class NavDrawer_Activity extends AppCompatActivity {
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
+
+    private FirebaseDatabase mFirebaseInstance;
+    private DatabaseReference mFirebaseDatabase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +99,7 @@ public class NavDrawer_Activity extends AppCompatActivity {
 
 
         firebaseAuth = FirebaseAuth.getInstance();
+        providers = new ArrayList<>(); // for deprecated setProviders method in firebase auth
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -95,7 +109,8 @@ public class NavDrawer_Activity extends AppCompatActivity {
                 if (user != null){
                     //user signed in
                     onSignedInInitialize(user.getDisplayName());
-                    getUSERDATA();
+                    //getUSERDATA();
+
 
                 }else {
                     //user not signed in
@@ -106,6 +121,7 @@ public class NavDrawer_Activity extends AppCompatActivity {
                                     .setIsSmartLockEnabled(false).setProviders(
                                     AuthUI.EMAIL_PROVIDER,
                                     AuthUI.GOOGLE_PROVIDER).setTheme(R.style.AppThemeFirebaseAuth).setLogo(q).build(), RC_SIGN_IN);
+
 
                 }
 
@@ -128,6 +144,9 @@ public class NavDrawer_Activity extends AppCompatActivity {
 
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
+
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseDatabase = mFirebaseInstance.getReference("users");
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +198,7 @@ public class NavDrawer_Activity extends AppCompatActivity {
     private void onSignedInInitialize(String user) {
         mUsername = user;
         //attachDBreadListener();
+
     }
 
 
@@ -261,6 +281,7 @@ public class NavDrawer_Activity extends AppCompatActivity {
                 // photos
                 MoviesFragment moviesFragment = new MoviesFragment();
                 return moviesFragment;
+
             /*case 2:
                 // movies fragment
                 MoviesFragment moviesFragment = new MoviesFragment();
@@ -327,7 +348,7 @@ public class NavDrawer_Activity extends AppCompatActivity {
                         // launch new intent instead of loading fragment
                         Intent intent = new Intent(NavDrawer_Activity.this, MainActivity.class);
                         //startActivity(new Intent(NavDrawer_Activity.this, MainActivity.class));
-                        intent.putExtra("email", email);
+                        //intent.putExtra("email", email);
                         startActivity(intent);
                         drawer.closeDrawers();
                         finish();
@@ -466,6 +487,41 @@ public class NavDrawer_Activity extends AppCompatActivity {
         }
 
         Toast.makeText(getApplicationContext(), " "+email, Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void updateUser() {
+        // updating the user via child nodes
+
+        /*if (!TextUtils.isEmpty(address))
+            mFirebaseDatabase.child(userId).child("address").setValue(address);
+        if (!TextUtils.isEmpty(landDetails))
+            mFirebaseDatabase.child(userId).child("landDetails").setValue(landDetails);
+*/
+        //mFirebaseDatabase.child("KfCUrfWIDMbLhxv1VRR").child("address").setValue(address);
+        //mFirebaseDatabase.child("KfCUrfWIDMbLhxv1VRR").child("landDetails").setValue(landDetails);
+
+        mFirebaseDatabase.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                try { mFirebaseDatabase.child(email).child("name").setValue(""); mFirebaseDatabase.child(email).child("phnNum").setValue(0);
+                    mFirebaseDatabase.child(email).child("address").setValue(""); mFirebaseDatabase.child(email).child("remarks").setValue("");
+                    mFirebaseDatabase.child(email).child("placename").setValue(""); mFirebaseDatabase.child(email).child("longitude").setValue(25.999);
+                    mFirebaseDatabase.child(email).child("deg").setValue(300); mFirebaseDatabase.child(email).child("windspeed").setValue(3);
+                    mFirebaseDatabase.child(email).child("landSize").setValue(2);mFirebaseDatabase.child(email).child("latitude").setValue(31.9087);
+                    mFirebaseDatabase.child(email).child("spaceType").setValue("");}
+                catch (Exception e) { e.printStackTrace(); }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
 
     }
 

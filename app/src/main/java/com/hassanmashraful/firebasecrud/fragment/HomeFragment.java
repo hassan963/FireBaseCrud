@@ -3,6 +3,7 @@ package com.hassanmashraful.firebasecrud.fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,9 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hassanmashraful.firebasecrud.Location;
 import com.hassanmashraful.firebasecrud.R;
-import com.hassanmashraful.firebasecrud.activity.Map_Activity;
 import com.hassanmashraful.firebasecrud.model.LocationDetails;
-import com.hassanmashraful.firebasecrud.model.User;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -68,7 +66,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private String address;
     private double latitude, longitude;
 
-    private static String email;
+    private String email = "b@a,com";
 
     ArrayList<LocationDetails> locationDetailses = new ArrayList<>();
 
@@ -133,11 +131,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         mList = mFirebaseInstance.getReference("users");
 
-        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+        /*SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.mapHome);
-        mapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(this);*/
 
-        userDataCall(); //getting user data
+
+
+       mList.addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot dataSnapshot) {
+               if (dataSnapshot.hasChild(email)){
+                   userDataCall(); //getting user data
+                   getMAP();
+                   //getDouble(editor, key_url.numOfTurbineOne, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputOne, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputOne, oneTurbineOutput);
+               }
+           }
+
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
+
+           }
+       });
 
         return view;
     }
@@ -147,6 +161,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    private void getMAP(){
+        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+                .findFragmentById(R.id.mapHome);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -166,7 +186,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mListener = null;
     }
 
-    private void userDataCall(){
+    public void userDataCall(){
 
         mList.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -372,7 +392,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Log.v("##$##$#$%%##@$%#%$# ", futureLocation.get(i).getCity()+" "+futureLocation.get(i).getDeg()+" "+futureLocation.get(i).getLat()+" "+futureLocation.get(i).getLon()+" "+futureLocation.get(i).getSpeed());
 
 
+    }
 
+    double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
+        return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
     }
 
 }

@@ -33,6 +33,8 @@ public class MoviesFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -72,7 +74,7 @@ public class MoviesFragment extends Fragment {
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        Youtube_Adapter adapter=new Youtube_Adapter(getContext());
+        Youtube_Adapter adapter=new Youtube_Adapter(getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;

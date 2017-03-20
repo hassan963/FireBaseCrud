@@ -14,6 +14,7 @@ public class FcmInstanceIdService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         String fcm_token = FirebaseInstanceId.getInstance().getToken();
-        Log.v("FCM_TOKEN $### ",fcm_token);
+        Log.v("FCM_TOKEN $### ",FirebaseInstanceId.getInstance().getToken());
+        //Toast.makeText(getApplicationContext(), FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_LONG).show();
     }
 }

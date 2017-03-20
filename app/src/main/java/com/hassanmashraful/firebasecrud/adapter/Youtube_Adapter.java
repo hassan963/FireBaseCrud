@@ -3,7 +3,6 @@ package com.hassanmashraful.firebasecrud.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +24,8 @@ public class Youtube_Adapter extends RecyclerView.Adapter<Youtube_Adapter.VideoI
 
 
     //these ids are the unique id for each video
-    String[] VideoID = { "g7BXIOLVVx4", "9za-6Tq-WVc","xscfyo6SVrk","SQpbTTGe_gk","b7_ix42ghCQ", "cQAWAO0kdts", "uXIS5S86jfc", "qSWm_nprfqE", "zMoatr5RQFs"};
-    Context ctx;
+    private String[] VideoID = { "g7BXIOLVVx4", "9za-6Tq-WVc","xscfyo6SVrk","SQpbTTGe_gk","b7_ix42ghCQ", "cQAWAO0kdts", "uXIS5S86jfc", "qSWm_nprfqE", "zMoatr5RQFs"};
+    private Context ctx;
 
     public Youtube_Adapter(Context ctx) {
         this.ctx = ctx;

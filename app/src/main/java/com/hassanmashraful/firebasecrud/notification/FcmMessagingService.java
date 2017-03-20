@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.hassanmashraful.firebasecrud.R;
 import com.hassanmashraful.firebasecrud.activity.NavDrawer_Activity;
 import com.hassanmashraful.firebasecrud.util.MySingleton;
 
@@ -41,7 +42,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
             builder.setContentText(message);
             builder.setContentIntent(pendingIntent);
             builder.setSound(soundUri);
-            builder.setSmallIcon(com.facebook.R.drawable.notification_tile_bg);
+            builder.setSmallIcon(R.drawable.iconn);
 
             ImageRequest imageRequest = new ImageRequest(img_url, new Response.Listener<Bitmap>() {
                 @Override

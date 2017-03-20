@@ -223,9 +223,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 addTV.setText("Address: "+address);
                 latLonTV.setText("Latitude: "+latitude+"\n"+" "+"Longitude: "+longitude);
 
-                nameTV.setText(numOfTurbineOne+" "+oneTurbineOutputOne+" "+totalTurbineOutputOne);
-                phnTV.setText(numOfTurbineTwo+" "+oneTurbineOutputTwo+" "+totalTurbineOutputTwo);
-                landTypTV.setText(numOfTurbineThree+" "+oneTurbineOutputThree+" "+totalTurbineOutputThree);
+                nameTV.setText("For 25m Turbine, Num of turbine: "+numOfTurbineOne+" \nPer turbine power output: "+oneTurbineOutputOne+" \nTotal output: "+totalTurbineOutputOne);
+                phnTV.setText("For 50m Turbine, Num of turbine: "+numOfTurbineTwo+" \nPer turbine power output: "+oneTurbineOutputTwo+" \nTotal output: "+totalTurbineOutputTwo);
+                landTypTV.setText("For 100m Turbine, Num of turbine: "+numOfTurbineThree+" \nPer turbine power output: "+oneTurbineOutputThree+" \nTotal output: "+totalTurbineOutputThree);
 
             }
 

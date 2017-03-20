@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hassanmashraful.firebasecrud.Location;
 import com.hassanmashraful.firebasecrud.R;
+import com.hassanmashraful.firebasecrud.key.key_url;
 import com.hassanmashraful.firebasecrud.model.LocationDetails;
 
 import java.util.ArrayList;
@@ -63,12 +64,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private String name;
     private String phnNum;
-    private String address;
-    private double latitude, longitude;
+    private String address, spaceType, areaValue;
+    private double latitude, longitude, speed, landSize;
 
     private String email = "b@a,com";
 
     ArrayList<LocationDetails> locationDetailses = new ArrayList<>();
+    private SharedPreferences sharedpreferences;
+    private double numOfTurbineOne,
+            oneTurbineOutputOne,
+            totalTurbineOutputOne,
+            numOfTurbineTwo,
+            oneTurbineOutputTwo,
+            totalTurbineOutputTwo,
+            numOfTurbineThree,
+            oneTurbineOutputThree,
+            totalTurbineOutputThree;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -130,6 +141,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mFirebaseInstance = FirebaseDatabase.getInstance();
 
         mList = mFirebaseInstance.getReference("users");
+        sharedpreferences = this.getActivity().getSharedPreferences(key_url.TurbineDetails, Context.MODE_PRIVATE);
 
         /*SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.mapHome);
@@ -141,9 +153,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
                if (dataSnapshot.hasChild(email)){
-                   userDataCall(); //getting user data
-                   getMAP();
-                   //getDouble(editor, key_url.numOfTurbineOne, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputOne, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputOne, oneTurbineOutput);
+                       userDataCall(); //getting user data
+                       getMAP();
+
                }
            }
 
@@ -197,13 +209,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 address = dataSnapshot.child("address").getValue().toString();
                 latitude = Double.parseDouble(dataSnapshot.child("latitude").getValue().toString());
                 longitude = Double.parseDouble(dataSnapshot.child("longitude").getValue().toString());
+                landSize = Double.parseDouble(dataSnapshot.child("landSize").getValue().toString());
+                spaceType = dataSnapshot.child("spaceType").getValue().toString();
+                speed = Double.parseDouble(dataSnapshot.child("windspeed").getValue().toString());
+                areaValue = dataSnapshot.child("areaValue").getValue().toString();
 
-                nameTV.setText("Name: "+name);
-                phnTV.setText("Phone Num: "+phnNum);
-                landTypTV.setText("Address: "+address);
+                verdictResult();
+
+                //nameTV.setText("Name: "+name);
+                //phnTV.setText("Phone Num: "+phnNum);
+                //landTypTV.setText("Address: "+address);
                 prevTV.setText("Still working");
                 addTV.setText("Address: "+address);
                 latLonTV.setText("Latitude: "+latitude+"\n"+" "+"Longitude: "+longitude);
+
+                nameTV.setText(numOfTurbineOne+" "+oneTurbineOutputOne+" "+totalTurbineOutputOne);
+                phnTV.setText(numOfTurbineTwo+" "+oneTurbineOutputTwo+" "+totalTurbineOutputTwo);
+                landTypTV.setText(numOfTurbineThree+" "+oneTurbineOutputThree+" "+totalTurbineOutputThree);
 
             }
 
@@ -213,59 +235,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
     }
-/*
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-                mMap = googleMap;
-
-                mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Response").snippet(address).icon(BitmapDescriptorFactory.fromResource(R.drawable.wlll)));
-                //marker.
-
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),1));
-
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-                        builder.setTitle("We will get back to you soon..");
-                        builder.setMessage("Address: "+address+"\n"+"We can plant WindMill here");
-
-
-
-
-                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK button
-                            }
-                        });
-                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-
-                        // Set other dialog properties
-
-                        // Create the AlertDialog
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-
-                        // Add the button
-
-                        return false;
-                    }
-                });
-
-
-
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(, -82.80654),7));
-
-    }*/
 
     //Getting current user
     public void getUSERDATA(){
@@ -394,8 +363,73 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
-        return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
+
+    private void verdictResult(){
+
+            switch (areaValue){
+                case "Agriculture field":
+                    resultTurbine(25);
+                    resultTurbine(50);
+                    resultTurbine(100);
+                    break;
+                case "Coastal area":
+                    resultTurbine(50);
+                    resultTurbine(100);
+                    break;
+                case "Residential area":
+                    resultTurbine(25);
+                    break;
+                case "Riverside":
+                    resultTurbine(50);
+                    resultTurbine(100);
+                    break;
+                default:
+                    break;
+            }
+
+
     }
+
+    private void resultTurbine(double turbineHeight){
+
+        //0.5*p*A*Cp*V3*Ng*Nb
+        double air_density = 1.2, //p 1.2 kg/m3 (sea level)
+                rotor_swept_area, // meter^2
+                coefficient_of_performance = 0.35, //Cp  0.35 is typical, 0.56 is the theoretical maximum known as the Betz limit.
+                wind_velocity = speed, // V
+                generator_efficiency = 50, // Ng	50 percent to 80 percent.
+                gear_box_bearing_efficiency = 95, // Nb 95 percent
+                pi = 3.1416;
+        double land; land = landSize;
+        land = land * 1000000;
+
+
+        if (turbineHeight==25){
+            rotor_swept_area = pi*(turbineHeight*turbineHeight);
+            numOfTurbineOne = land/1000;
+            oneTurbineOutputOne = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutputOne = numOfTurbineOne*oneTurbineOutputOne;
+
+
+
+        }
+        if (turbineHeight==50){
+            rotor_swept_area = pi*(turbineHeight*turbineHeight);
+            numOfTurbineTwo = land/1500;
+            oneTurbineOutputTwo = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutputTwo = numOfTurbineTwo*oneTurbineOutputTwo;
+
+        }
+        if (turbineHeight==100){
+            rotor_swept_area = pi*(turbineHeight*turbineHeight);
+            numOfTurbineThree = land/2000;
+            oneTurbineOutputThree = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutputThree = numOfTurbineThree*oneTurbineOutputThree;
+
+        }
+
+    }
+
+
 
 }

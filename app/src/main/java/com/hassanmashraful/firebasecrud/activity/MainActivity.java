@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     mFirebaseDatabase.child(email).child("placename").setValue(placename); mFirebaseDatabase.child(email).child("longitude").setValue(longitude);
                     mFirebaseDatabase.child(email).child("deg").setValue(deg); mFirebaseDatabase.child(email).child("windspeed").setValue(speed);
                     mFirebaseDatabase.child(email).child("landSize").setValue(landSize);mFirebaseDatabase.child(email).child("latitude").setValue(latitude);
-                mFirebaseDatabase.child(email).child("spaceType").setValue(spaceType);}
+                mFirebaseDatabase.child(email).child("spaceType").setValue(spaceType); mFirebaseDatabase.child(email).child("areaValue").setValue(areaValue);}
                 catch (Exception e) { e.printStackTrace(); }
 
             }

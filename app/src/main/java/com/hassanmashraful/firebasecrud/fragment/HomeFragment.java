@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -89,6 +90,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             oneTurbineOutputThree,
             totalTurbineOutputThree;
 
+    SupportMapFragment mapFragment;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -147,6 +150,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         latLonTV = (TextView) view.findViewById(R.id.latLonTV);*/
 
 
+        mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+                .findFragmentById(R.id.mapHome);
+
         mFirebaseInstance = FirebaseDatabase.getInstance();
 
         mList = mFirebaseInstance.getReference("users");
@@ -189,9 +195,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void getMAP(){
-        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-                .findFragmentById(R.id.mapHome);
-        mapFragment.getMapAsync(this);
+        if (mapFragment == null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            mapFragment = SupportMapFragment.newInstance();
+            fragmentTransaction.replace(R.id.mapHome, mapFragment).commit();
+            mapFragment.getMapAsync(this);
+        }
+        if (mapFragment != null)
+        {
+            mapFragment.getMapAsync(this);
+
+        }
+
+
     }
 
     @Override

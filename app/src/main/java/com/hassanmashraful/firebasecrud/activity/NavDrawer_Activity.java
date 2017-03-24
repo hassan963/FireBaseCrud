@@ -1,7 +1,9 @@
 package com.hassanmashraful.firebasecrud.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -35,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hassanmashraful.firebasecrud.R;
 import com.hassanmashraful.firebasecrud.fragment.HomeFragment;
 import com.hassanmashraful.firebasecrud.fragment.MoviesFragment;
+import com.hassanmashraful.firebasecrud.key.key_url;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +93,8 @@ public class NavDrawer_Activity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseDatabase;
 
+    SharedPreferences preferences;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +134,8 @@ public class NavDrawer_Activity extends AppCompatActivity {
             }
         };
 
+        preferences = getSharedPreferences(key_url.TurbineDetails, Context.MODE_PRIVATE);
+
         mHandler = new Handler();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -167,6 +174,8 @@ public class NavDrawer_Activity extends AppCompatActivity {
             CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
+
+
 
     }
 
@@ -449,6 +458,9 @@ public class NavDrawer_Activity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
             AuthUI.getInstance().signOut(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.apply();
             finish();
             return true;
         }

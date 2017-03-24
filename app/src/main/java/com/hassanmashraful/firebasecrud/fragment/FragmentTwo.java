@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,31 +28,32 @@ public class FragmentTwo extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_one, null, false);
-        nameTV = (TextView) view.findViewById(R.id.nameTV);
+       /* nameTV = (TextView) view.findViewById(R.id.nameTV);
         phnTV = (TextView) view.findViewById(R.id.phnTV);
         landSizeTV = (TextView) view.findViewById(R.id.landSizeTV);
         numOfTurbine = (TextView) view.findViewById(R.id.numOfTurbine);
 
         oneTurbineOutput = (TextView) view.findViewById(R.id.oneTurbineOutput);
         totalTurbineOutput = (TextView) view.findViewById(R.id.totalTurbineOutput);
-        latLonTV = (TextView) view.findViewById(R.id.latLonTV);
+        latLonTV = (TextView) view.findViewById(R.id.latLonTV);*/
 
         sharedpreferences = this.getActivity().getSharedPreferences(key_url.TurbineDetails, Context.MODE_PRIVATE);
 
-        nameTV.setText("hasan");
+        /*nameTV.setText("hasan");
         phnTV.setText("d");
-        landSizeTV.setText("1");
+        landSizeTV.setText("1");*/
         sharedpreferences = this.getActivity().getSharedPreferences(key_url.TurbineDetails, Context.MODE_PRIVATE);
 
         double a = getDouble(sharedpreferences, key_url.numOfTurbineOne ,numOfTurbineTwo);
         double b = getDouble(sharedpreferences, key_url.oneTurbineOutputOne ,oneTurbineOutputTwo);
         double c = getDouble(sharedpreferences, key_url.totalTurbineOutputOne ,totalTurbineOutputTwo);
-        nameTV.setText("hasan");
+        /*nameTV.setText("hasan");
         phnTV.setText("d");
-        landSizeTV.setText("1");
-        numOfTurbine.setText(String.valueOf(String.valueOf(a)));
+        landSizeTV.setText("1");*/
+       /* numOfTurbine.setText(String.valueOf(String.valueOf(a)));
         totalTurbineOutput.setText(String.valueOf(String.valueOf(String.valueOf(b))));
-        oneTurbineOutput.setText(String.valueOf(String.valueOf(String.valueOf(c))));
+        oneTurbineOutput.setText(String.valueOf(String.valueOf(String.valueOf(c))));*/
+        Log.v("@@$%%^$#%$", a+"   "+b+"   "+c);
 
         return view;
     }

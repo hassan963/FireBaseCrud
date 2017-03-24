@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference verdictReference;
     //private ChildEventListener childEventListener;
 
     //right nw
@@ -121,6 +122,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private VolleySingleton volleySingleton;
     private SharedPreferences sharedpreferences;
+
+    private double numOfTurbineOne,
+            oneTurbineOutputOne,
+            totalTurbineOutputOne,
+            numOfTurbineTwo,
+            oneTurbineOutputTwo,
+            totalTurbineOutputTwo,
+            numOfTurbineThree,
+            oneTurbineOutputThree,
+            totalTurbineOutputThree;
 
 
     @Override
@@ -172,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mFirebaseDatabase = mFirebaseInstance.getReference("users");
 
         databaseReference = mFirebaseInstance.getReference("users");
+        verdictReference = mFirebaseInstance.getReference("verdict");
 
         // store app title to 'app_title' node
        // mFirebaseInstance.getReference("app_title").setValue("Realtime Database");
@@ -319,43 +331,80 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 generator_efficiency = 50, // Ng	50 percent to 80 percent.
                 gear_box_bearing_efficiency = 95, // Nb 95 percent
                 pi = 3.1416;
-        double oneTurbineOutput, land; land = Double.parseDouble(landSizeET.getText().toString());
-        double numOfTurbine = 0, totalTurbineOutput = 0;
+        double land; land = Double.parseDouble(landSizeET.getText().toString());
+
         land = land * 1000000;
 
         SharedPreferences.Editor editor = sharedpreferences.edit();
 
         if (turbineHeight==25){
             rotor_swept_area = pi*(turbineHeight*turbineHeight);
-            numOfTurbine = land/1000;
-            oneTurbineOutput = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
-            totalTurbineOutput = numOfTurbine*oneTurbineOutput;
-            Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
-            Log.v("@$@%#%%$^% TURBINE",numOfTurbine+" "+totalTurbineOutput+" "+oneTurbineOutput);
-            putDouble(editor, key_url.numOfTurbineOne, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputOne, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputOne, oneTurbineOutput);
-            editor.apply();
+            numOfTurbineOne = land/1000;
+            oneTurbineOutputOne = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutputOne = numOfTurbineOne*oneTurbineOutputOne;
+            //Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
+            Log.v("@$@%#%%$^% TURBINE",numOfTurbineOne+" "+totalTurbineOutputOne+" "+oneTurbineOutputOne);
+            //putDouble(editor, key_url.numOfTurbineOne, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputOne, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputOne, oneTurbineOutput);
+            //editor.apply();
+
+            verdictReference.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    verdictReference.child(email).child("numOfTurbineOne").setValue(numOfTurbineOne); verdictReference.child(email).child("totalTurbineOutputOne").setValue(totalTurbineOutputOne);
+                    verdictReference.child(email).child("oneTurbineOutputOne").setValue(oneTurbineOutputOne);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
 
         }
         if (turbineHeight==50){
             rotor_swept_area = pi*(turbineHeight*turbineHeight);
-            numOfTurbine = land/1500;
-            oneTurbineOutput = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
-            totalTurbineOutput = numOfTurbine*oneTurbineOutput;
-            Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
-            Log.v("@$@%#%%$^% TURBINE",numOfTurbine+" "+totalTurbineOutput+" "+oneTurbineOutput);
-            putDouble(editor, key_url.numOfTurbineTwo, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputTwo, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputTwo, oneTurbineOutput);
-            editor.apply();
+            numOfTurbineTwo = land/1500;
+            oneTurbineOutputTwo = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutputTwo = numOfTurbineTwo*numOfTurbineTwo;
+            //Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
+            Log.v("@$@%#%%$^% TURBINE",numOfTurbineTwo+" "+oneTurbineOutputTwo+" "+totalTurbineOutputTwo);
+            //putDouble(editor, key_url.numOfTurbineTwo, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputTwo, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputTwo, oneTurbineOutput);
+           // editor.apply();
+            verdictReference.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    verdictReference.child(email).child("numOfTurbineTwo").setValue(numOfTurbineTwo); verdictReference.child(email).child("totalTurbineOutputTwo").setValue(totalTurbineOutputTwo);
+                    verdictReference.child(email).child("oneTurbineOutputTwo").setValue(oneTurbineOutputTwo);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
         if (turbineHeight==100){
             rotor_swept_area = pi*(turbineHeight*turbineHeight);
-            numOfTurbine = land/2000;
-            oneTurbineOutput = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
-            totalTurbineOutput = numOfTurbine*oneTurbineOutput;
-            Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
-            Log.v("@$@%#%%$^% TURBINE",numOfTurbine+" "+totalTurbineOutput+" "+oneTurbineOutput);
-            putDouble(editor, key_url.numOfTurbineThree, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputThree, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputThree, oneTurbineOutput);
-            editor.apply();
+            numOfTurbineThree = land/2000;
+            oneTurbineOutputThree = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
+            totalTurbineOutputThree = numOfTurbineThree*oneTurbineOutputThree;
+            //Toast.makeText(getApplicationContext(), numOfTurbine+" "+ oneTurbineOutput+" "+totalTurbineOutput, Toast.LENGTH_SHORT).show();
+            Log.v("@$@%#%%$^% TURBINE",numOfTurbineThree+" "+totalTurbineOutputThree+" "+oneTurbineOutputThree);
+            //putDouble(editor, key_url.numOfTurbineThree, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputThree, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputThree, oneTurbineOutput);
+           // editor.apply();
+            verdictReference.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    verdictReference.child(email).child("numOfTurbineThree").setValue(numOfTurbineThree); verdictReference.child(email).child("totalTurbineOutputThree").setValue(totalTurbineOutputThree);
+                    verdictReference.child(email).child("oneTurbineOutputThree").setValue(oneTurbineOutputThree);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
     }

@@ -201,6 +201,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             mapFragment = SupportMapFragment.newInstance();
             fragmentTransaction.replace(R.id.mapHome, mapFragment).commit();
             mapFragment.getMapAsync(this);
+
         }
         if (mapFragment != null)
         {
@@ -432,16 +433,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 generator_efficiency = 50, // Ng	50 percent to 80 percent.
                 gear_box_bearing_efficiency = 95, // Nb 95 percent
                 pi = 3.1416;
+        double numOfTurbine = 0, totalTurbineOutput = 0, oneTurbineOutput = 0;
         double land; land = landSize;
         land = land * 1000000;
 
+        SharedPreferences.Editor editor = sharedpreferences.edit();
 
         if (turbineHeight==25){
             rotor_swept_area = pi*(turbineHeight*turbineHeight);
             numOfTurbineOne = land/1000;
             oneTurbineOutputOne = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
             totalTurbineOutputOne = numOfTurbineOne*oneTurbineOutputOne;
-
+            putDouble(editor, key_url.numOfTurbineOne, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputOne, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputOne, oneTurbineOutput);
+            editor.apply();
 
 
         }
@@ -450,6 +454,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             numOfTurbineTwo = land/1500;
             oneTurbineOutputTwo = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
             totalTurbineOutputTwo = numOfTurbineTwo*oneTurbineOutputTwo;
+            putDouble(editor, key_url.numOfTurbineTwo, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputTwo, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputTwo, oneTurbineOutput);
+            editor.apply();
 
         }
         if (turbineHeight==100){
@@ -457,6 +463,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             numOfTurbineThree = land/2000;
             oneTurbineOutputThree = (0.5*air_density*rotor_swept_area*coefficient_of_performance*(wind_velocity*wind_velocity*wind_velocity)*generator_efficiency*gear_box_bearing_efficiency)/1000000;
             totalTurbineOutputThree = numOfTurbineThree*oneTurbineOutputThree;
+            putDouble(editor, key_url.numOfTurbineThree, numOfTurbine); putDouble(editor, key_url.totalTurbineOutputThree, totalTurbineOutput); putDouble(editor, key_url.oneTurbineOutputThree, oneTurbineOutput);
+            editor.apply();
 
         }
 
@@ -471,20 +479,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         public Fragment getItem(int num) {
             if (num == 0) {
                 FragmentOne fragmentOne = new FragmentOne();
-                Bundle bundle = new Bundle();
+                /*Bundle bundle = new Bundle();
                 bundle.putInt("numOfTurbineOne", 1000);
                 bundle.putDouble("oneTurbineOutputOne", 754.77);
                 bundle.putDouble("totalTurbineOutputOne", 754000.77);
-                fragmentOne.setArguments(bundle);
+                fragmentOne.setArguments(bundle);*/
                 return fragmentOne;
             } else {
-                FragmentTwo fragmentTwo = new FragmentTwo();
-                Bundle bundle = new Bundle();
+                FragmentOne fragmentOne = new FragmentOne();
+                /*Bundle bundle = new Bundle();
                 bundle.putInt("numOfTurbineTwo", 2000);
                 bundle.putDouble("oneTurbineOutputTwo", 3455.77);
                 bundle.putDouble("totalTurbineOutputTwo", 2353000.77);
-                fragmentTwo.setArguments(bundle);
-                return fragmentTwo;
+                fragmentTwo.setArguments(bundle);*/
+                return fragmentOne;
             }
         }
 
@@ -492,6 +500,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         public int getCount() {
             return NUM_ITEMS;
         }
+    }
+
+    SharedPreferences.Editor putDouble(final SharedPreferences.Editor edit, final String key, final double value) {
+        return edit.putLong(key, Double.doubleToRawLongBits(value));
     }
 
 
